@@ -14,16 +14,16 @@ import java.util.Random;
  */
 public class ShuffleReseach extends Searcher
 {
-	public ShuffleReseach(Solution solution, Random rnd, Instance instance)
+	public ShuffleReseach(long start, long duration, Solution solution, Random rnd, Instance instance)
 	{
-		super(solution, rnd, instance);
+		super(start, duration, solution, rnd, instance);
 	}
 	
 	@Override
 	public void loop()
 	{
 		Collections.shuffle(solution, rnd);
-		solution.setOF(TSPCostCalculator.calcOF(instance.getDistanceMatrix(), solution));
+		solution.setOF(TSPCostCalculator.calcOF(distances, solution));
 		//System.out.println(solution);
 		if(best == null)
 			best = solution.clone();

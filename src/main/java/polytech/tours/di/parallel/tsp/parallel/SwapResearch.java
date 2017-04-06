@@ -13,17 +13,17 @@ import java.util.Random;
  */
 public class SwapResearch extends Searcher
 {
-	public SwapResearch(Solution solution, Random rnd, Instance instance)
+	public SwapResearch(long start, long duration, Solution solution, Random rnd, Instance instance)
 	{
-		super(solution, rnd, instance);
+		super(start, duration, solution, rnd, instance);
 	}
 	
 	@Override
 	public void loop()
 	{
-		int index = rnd.nextInt(instance.getN());
-		solution.swap(index, (index + 1) % instance.getN());
-		solution.setOF(TSPCostCalculator.calcOF(instance.getDistanceMatrix(), solution));
+		int index = rnd.nextInt(nodeNumber);
+		solution.swap(index, (index + 1) % nodeNumber);
+		solution.setOF(TSPCostCalculator.calcOF(distances, solution));
 		//System.out.println(solution);
 		if(best == null)
 			best = solution.clone();

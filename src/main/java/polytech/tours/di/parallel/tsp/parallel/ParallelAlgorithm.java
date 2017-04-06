@@ -4,12 +4,14 @@ import polytech.tours.di.parallel.tsp.Algorithm;
 import polytech.tours.di.parallel.tsp.Instance;
 import polytech.tours.di.parallel.tsp.InstanceReader;
 import polytech.tours.di.parallel.tsp.Solution;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -47,23 +49,24 @@ public class ParallelAlgorithm implements Algorithm
 				{
 					default:
 					case 0:
-						searcher = new ShuffleReseach(solution.clone(), rnd, instance);
+						searcher = new ShuffleReseach(startTime, max_cpu, solution.clone(), rnd, instance);
 						break;
 					case 1:
-						searcher = new SwapResearch(solution.clone(), rnd, instance);
+						searcher = new SwapResearch(startTime, max_cpu, solution.clone(), rnd, instance);
 						break;
 					case 2:
-						searcher = new InvertResearch(solution.clone(), rnd, instance);
+						searcher = new InvertResearch(startTime, max_cpu, solution.clone(), rnd, instance);
 						break;
 					case 3:
-						searcher = new Swap2Research(solution.clone(), rnd, instance);
+						searcher = new Swap2Research(startTime, max_cpu, solution.clone(), rnd, instance);
 				}
 				searchers.add(searcher);
 			}
 			
+			ArrayList<Future<Solution>> futures = new ArrayList<>();
 			try
 			{
-				executorService.invokeAll(searchers, max_cpu, TimeUnit.SECONDS);
+				futures.addAll(executorService.invokeAll(searchers));
 			}
 			catch(Exception e)
 			{
@@ -72,12 +75,11 @@ public class ParallelAlgorithm implements Algorithm
 			executorService.shutdown();
 			
 			Solution best = null;
-			for(Searcher searcher : searchers)
+			for(Future<Solution> future : futures)
 			{
-				searcher.stop();
-				if(searcher.get() != null)
-					if(best == null ||searcher.get().getOF() < best.getOF())
-						best = searcher.get();
+				if(future.isDone())
+					if(best == null || future.get().getOF() < best.getOF())
+						best = future.get();
 			}
 			
 			System.out.println("Time: " + (System.currentTimeMillis() - startTime) / 1000 + "s");

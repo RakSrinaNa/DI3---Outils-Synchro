@@ -13,18 +13,18 @@ import java.util.Random;
  */
 public class InvertResearch extends Searcher
 {
-	public InvertResearch(Solution solution, Random rnd, Instance instance)
+	public InvertResearch(long start, long duration, Solution solution, Random rnd, Instance instance)
 	{
-		super(solution, rnd, instance);
+		super(start, duration, solution, rnd, instance);
 	}
 	
 	@Override
 	public void loop()
 	{
-		int index = rnd.nextInt(instance.getN());
-		int index2 = rnd.nextInt(instance.getN());
+		int index = rnd.nextInt(nodeNumber);
+		int index2 = rnd.nextInt(nodeNumber);
 		solution.relocate(index, index2);
-		solution.setOF(TSPCostCalculator.calcOF(instance.getDistanceMatrix(), solution));
+		solution.setOF(TSPCostCalculator.calcOF(distances, solution));
 		//System.out.println(solution);
 		if(best == null)
 			best = solution.clone();

@@ -11,27 +11,33 @@ import java.util.concurrent.Callable;
  * @author Thomas Couchoud
  * @since 2017-03-30
  */
-public abstract class Searcher implements Callable<Void>
+public abstract class Searcher implements Callable<Solution>
 {
+	private final long start;
+	private final long duration;
 	protected Solution solution;
 	protected final Random rnd;
-	protected final Instance instance;
+	protected final double[][] distances;
 	protected Solution best;
+	protected final int nodeNumber;
 	private boolean stop = false;
 	
-	public Searcher(Solution solution, Random rnd, Instance instance)
+	public Searcher(long start, long duration, Solution solution, Random rnd, Instance instance)
 	{
+		this.start = start;
+		this.duration = duration * 1000;
 		this.solution = solution;
 		this.rnd = rnd;
-		this.instance = instance;
+		this.distances = instance.getDistanceMatrix();
+		this.nodeNumber = instance.getN();
 	}
 	
 	@Override
-	public Void call() throws Exception
+	public Solution call() throws Exception
 	{
-		while(!stop)
+		while(!stop || (start + duration) < System.currentTimeMillis())
 			loop();
-		return null;
+		return best;
 	}
 	
 	public void stop()
