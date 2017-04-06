@@ -1,15 +1,13 @@
 package polytech.tours.di.parallel.tsp.parallel;
 
-import java.util.Arrays;
-import java.util.Random;
-
 import polytech.tours.di.parallel.tsp.Instance;
 import polytech.tours.di.parallel.tsp.Solution;
+import java.util.Random;
 
 public class Heuristic {
 
-	public static Solution closest(Instance instance, Random rd){
-		Solution solution = new Solution();
+	public static void closest(Solution solution, Instance instance, Random rd){
+		solution.clear();
 		solution.add(rd.nextInt(instance.getN()));
 		
 		for(int i = 0; i < instance.getN() -1; i++){
@@ -22,8 +20,6 @@ public class Heuristic {
 
 			solution.add(min(closeCity));	
 		}		
-		
-		return solution;
 	}
 	
 	private static int min(double[] tab){

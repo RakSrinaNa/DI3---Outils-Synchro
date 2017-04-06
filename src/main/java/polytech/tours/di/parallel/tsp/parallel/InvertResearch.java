@@ -5,17 +5,11 @@ import polytech.tours.di.parallel.tsp.Solution;
 import polytech.tours.di.parallel.tsp.TSPCostCalculator;
 import java.util.Random;
 
-/**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 30/03/2017.
- *
- * @author Thomas Couchoud
- * @since 2017-03-30
- */
 public class InvertResearch extends Searcher
 {
-	public InvertResearch(long start, long duration, Solution solution, Random rnd, Instance instance)
+	public InvertResearch(long endTime, long duration, Solution solution, Random rnd, Instance instance)
 	{
-		super(start, duration, solution, rnd, instance);
+		super(endTime, duration, solution, rnd, instance);
 	}
 	
 	@Override
@@ -24,7 +18,7 @@ public class InvertResearch extends Searcher
 		int index = rnd.nextInt(nodeNumber);
 		int index2 = rnd.nextInt(nodeNumber);
 		solution.relocate(index, index2);
-		solution.setOF(TSPCostCalculator.calcOF(distances, solution));
+		solution.setOF(TSPCostCalculator.calcOF(getDistances(), solution));
 		//System.out.println(solution);
 		if(best == null)
 			best = solution.clone();

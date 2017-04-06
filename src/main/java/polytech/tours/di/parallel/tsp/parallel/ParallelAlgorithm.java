@@ -4,69 +4,57 @@ import polytech.tours.di.parallel.tsp.Algorithm;
 import polytech.tours.di.parallel.tsp.Instance;
 import polytech.tours.di.parallel.tsp.InstanceReader;
 import polytech.tours.di.parallel.tsp.Solution;
+import java.util.*;
+import java.util.concurrent.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Properties;
-import java.util.Random;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-
-/**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 30/03/2017.
- *
- * @author Thomas Couchoud
- * @since 2017-03-30
- */
 public class ParallelAlgorithm implements Algorithm
 {
 	@Override
 	public Solution run(Properties config)
 	{
-		Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 		try
 		{
 			InstanceReader ir = new InstanceReader();
 			ir.buildInstance(config.getProperty("instance"));
 			Instance instance = ir.getInstance();
-			long max_cpu = Long.valueOf(config.getProperty("maxcpu"));
+			long max_cpu = Long.valueOf(config.getProperty("maxcpu")) * 1000;
 			
 			Random rnd = new Random(Long.valueOf(config.getProperty("seed")));
 			long startTime = System.currentTimeMillis();
-			ExecutorService executorService = Executors.newFixedThreadPool(Integer.valueOf(config.getProperty("nbThreads")));
+			long endTime = startTime + max_cpu;
+			int threadCount = Integer.valueOf(config.getProperty("nbThreads"));
+			ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
 			
+			int pointsCount = Integer.valueOf(config.getProperty("startingPoints"));
+			double ratio = 1.0 / Math.floor(pointsCount / threadCount);
 			Solution solution = new Solution();
 			for(int i = 0; i < instance.getN(); i++)
 				solution.add(i);
-			ArrayList<Searcher> searchers = new ArrayList<>();
-			for(int i = 0; i < Integer.valueOf(config.getProperty("startingPoints")); i++)
+			ArrayList<Future<Solution>> futures = new ArrayList<>();
+			for(int i = 0; i < pointsCount; i++)
 			{
-				Searcher searcher;
-				Collections.shuffle(solution, rnd);
+				//Collections.shuffle(solution, rnd);
+				Heuristic.closest(solution, instance, rnd);
 				switch(Integer.valueOf(config.getProperty("searchID")))
 				{
 					default:
 					case 0:
-						searcher = new ShuffleReseach(startTime, max_cpu, solution.clone(), rnd, instance);
+						futures.add(executorService.submit(new ShuffleReseach(endTime, (long) (ratio * max_cpu), solution.clone(), rnd, instance)));
 						break;
 					case 1:
-						searcher = new SwapResearch(startTime, max_cpu, solution.clone(), rnd, instance);
+						futures.add(executorService.submit(new SwapResearch(endTime, (long) (ratio * max_cpu), solution.clone(), rnd, instance)));
 						break;
 					case 2:
-						searcher = new InvertResearch(startTime, max_cpu, solution.clone(), rnd, instance);
+						futures.add(executorService.submit(new InvertResearch(endTime, (long) (ratio * max_cpu), solution.clone(), rnd, instance)));
 						break;
 					case 3:
-						searcher = new Swap2Research(startTime, max_cpu, solution.clone(), rnd, instance);
+						futures.add(executorService.submit(new Swap2Research(endTime, (long) (ratio * max_cpu), solution.clone(), rnd, instance)));
 				}
-				searchers.add(searcher);
 			}
 			
-			ArrayList<Future<Solution>> futures = new ArrayList<>();
 			try
 			{
-				futures.addAll(executorService.invokeAll(searchers));
+				executorService.awaitTermination(max_cpu, TimeUnit.MILLISECONDS);
 			}
 			catch(Exception e)
 			{
@@ -74,15 +62,30 @@ public class ParallelAlgorithm implements Algorithm
 			}
 			executorService.shutdown();
 			
+			int count = 0;
 			Solution best = null;
 			for(Future<Solution> future : futures)
 			{
-				if(future.isDone())
-					if(best == null || future.get().getOF() < best.getOF())
-						best = future.get();
+				if(future.isDone() && !future.isCancelled())
+				{
+					try
+					{
+						if(future.get() != null)
+						{
+							count++;
+							if(best == null || future.get().getOF() < best.getOF())
+								best = future.get();
+						}
+					}
+					catch(ExecutionException e)
+					{
+						System.out.println("Error -> " + e.getCause());
+					}
+				}
 			}
 			
-			System.out.println("Time: " + (System.currentTimeMillis() - startTime) / 1000 + "s");
+			
+			System.out.println(String.format("Time: %ds, Searched %d/%d points", (System.currentTimeMillis() - startTime) / 1000, count, pointsCount));
 			
 			//return the solution
 			return best;
