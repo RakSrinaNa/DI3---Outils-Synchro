@@ -5,10 +5,10 @@
    	is the datafile holding the instance to solve
    </comment>
    <entry key="algorithm">polytech.tours.di.parallel.tsp.parallel.ParallelAlgorithm</entry>
-   <entry key="maxcpu">60</entry>
+   <entry key="maxcpu">10</entry>
    <entry key="instance">./data/lu980.tsp.txt</entry>
    <entry key="seed">123456</entry>
-   <entry key="startingPoints">200</entry>
-   <entry key="nbThreads">150</entry>
-    <entry key="searchID">1</entry>
+   <entry key="startingPoints">20</entry>
+   <entry key="nbThreads">20</entry>
+    <entry key="searchID">3</entry>
 </properties>

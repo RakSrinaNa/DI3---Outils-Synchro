@@ -46,10 +46,14 @@ public class Launcher
 			e.printStackTrace();
 		}
 		
-		//run algorithm
-		Solution s = algorithm.run(config);
-		
-		//report solution
-		System.out.println(s);
+		for(int i = 0; i < 10; i++)
+		{
+			//run algorithm
+			Solution s = algorithm.run(config);
+			
+			//report solution
+			System.out.print(s.getOF() + "\t");
+		}
+		System.out.println();
 	}
 }

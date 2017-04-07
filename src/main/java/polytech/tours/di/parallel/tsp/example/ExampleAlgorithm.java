@@ -26,7 +26,8 @@ public class ExampleAlgorithm implements Algorithm
 		//print some distances
 		long max_cpu = Long.valueOf(config.getProperty("maxcpu"));
 		//build a random solution
-		Random rnd = new Random(Long.valueOf(config.getProperty("seed")));
+		//Random rnd = new Random(Long.valueOf(config.getProperty("seed")));
+		Random rnd = new Random();
 		Solution s = new Solution();
 		Solution best = null;
 		long startTime = System.currentTimeMillis();
@@ -37,7 +38,7 @@ public class ExampleAlgorithm implements Algorithm
 			Collections.shuffle(s, rnd);
 			//set the objective function of the solution
 			s.setOF(TSPCostCalculator.calcOF(instance.getDistanceMatrix(), s));
-			System.out.println(s);
+			//System.out.println(s);
 			if(best == null)
 				best = s.clone();
 			else if(s.getOF() < best.getOF())
