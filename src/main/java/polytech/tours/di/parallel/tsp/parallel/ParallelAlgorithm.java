@@ -26,15 +26,14 @@ public class ParallelAlgorithm implements Algorithm
 			ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
 			
 			int pointsCount = Integer.valueOf(config.getProperty("startingPoints"));
-			double ratio = 1.0 / Math.floor(pointsCount / threadCount);
+			double ratio = threadCount / (double) pointsCount;
 			Solution solution = new Solution();
+			Heuristic.closest(solution, instance, rnd);
 			for(int i = 0; i < instance.getN(); i++)
 				solution.add(i);
 			ArrayList<Future<Solution>> futures = new ArrayList<>();
 			for(int i = 0; i < pointsCount; i++)
 			{
-				//Collections.shuffle(solution, rnd);
-				Heuristic.closest(solution, instance, rnd);
 				switch(Integer.valueOf(config.getProperty("searchID")))
 				{
 					default:
@@ -50,6 +49,7 @@ public class ParallelAlgorithm implements Algorithm
 					case 3:
 						futures.add(executorService.submit(new Swap2Research(endTime, (long) (ratio * max_cpu), solution.clone(), rnd, instance)));
 				}
+				Collections.shuffle(solution, rnd);
 			}
 			
 			try

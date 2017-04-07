@@ -18,7 +18,6 @@ public abstract class Searcher implements Callable<Solution>
 	
 	public Searcher(long endTime, long duration, Solution solution, Random rnd, Instance instance)
 	{
-		System.out.println(duration);
 		this.endTime = endTime;
 		this.duration = duration;
 		this.solution = solution;
