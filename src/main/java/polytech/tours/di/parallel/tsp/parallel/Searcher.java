@@ -2,6 +2,7 @@ package polytech.tours.di.parallel.tsp.parallel;
 
 import polytech.tours.di.parallel.tsp.Instance;
 import polytech.tours.di.parallel.tsp.Solution;
+import polytech.tours.di.parallel.tsp.TSPCostCalculator;
 import java.util.Random;
 import java.util.concurrent.Callable;
 
@@ -18,11 +19,13 @@ public abstract class Searcher implements Callable<Solution>
 	
 	public Searcher(long endTime, long duration, Solution solution, Random rnd, Instance instance)
 	{
+		this.distances = instance.getDistanceMatrix();
 		this.endTime = endTime;
 		this.duration = duration;
 		this.solution = solution;
+		this.solution.setOF(TSPCostCalculator.calcOF(getDistances(), this.solution));
+		this.best = solution.clone();
 		this.rnd = rnd;
-		this.distances = instance.getDistanceMatrix();
 		this.nodeNumber = instance.getN();
 	}
 	

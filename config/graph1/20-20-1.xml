@@ -4,8 +4,11 @@
    <comment>algorithm is the class implementing your algorithm and instance
    	is the datafile holding the instance to solve
    </comment>
-   <entry key="algorithm">polytech.tours.di.parallel.tsp.example.ExampleAlgorithm</entry>
+   <entry key="algorithm">polytech.tours.di.parallel.tsp.parallel.ParallelAlgorithm</entry>
    <entry key="maxcpu">10</entry>
    <entry key="instance">./data/lu980.tsp.txt</entry>
    <entry key="seed">-1</entry>
+   <entry key="startingPoints">20</entry>
+   <entry key="nbThreads">20</entry>
+    <entry key="searchID">1</entry>
 </properties>
