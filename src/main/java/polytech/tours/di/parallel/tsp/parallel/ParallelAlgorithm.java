@@ -18,9 +18,9 @@ public class ParallelAlgorithm implements Algorithm
 			ir.buildInstance(config.getProperty("instance"));
 			Instance instance = ir.getInstance();
 			long max_cpu = Long.valueOf(config.getProperty("maxcpu")) * 1000;
-			
-			//Random rnd = new Random(Long.valueOf(config.getProperty("seed")));
-			Random rnd = new Random();
+
+			long seed = Long.valueOf(config.getProperty("seed"));
+			Random rnd = seed > 0 ? new Random(seed) : new Random();
 			long startTime = System.currentTimeMillis();
 			long endTime = startTime + max_cpu;
 			int threadCount = Integer.valueOf(config.getProperty("nbThreads"));
@@ -67,7 +67,7 @@ public class ParallelAlgorithm implements Algorithm
 			Solution best = null;
 			for(Future<Solution> future : futures)
 			{
-				if(future.isDone() && !future.isCancelled())
+				if(future.isDone())
 				{
 					try
 					{
@@ -86,7 +86,7 @@ public class ParallelAlgorithm implements Algorithm
 			}
 			
 			
-			//System.out.println(String.format("Time: %ds, Searched %d/%d points", (System.currentTimeMillis() - startTime) / 1000, count, pointsCount));
+			System.out.println(String.format("Time: %ds, Searched %d/%d points, Score: %f", (System.currentTimeMillis() - startTime) / 1000, count, pointsCount, best.getOF()));
 			
 			//return the solution
 			return best;

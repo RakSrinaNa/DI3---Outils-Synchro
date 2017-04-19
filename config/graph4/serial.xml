@@ -6,6 +6,6 @@
    </comment>
    <entry key="algorithm">polytech.tours.di.parallel.tsp.example.ExampleAlgorithm</entry>
    <entry key="maxcpu">10</entry>
-   <entry key="instance">./data/lu980.tsp.txt</entry>
+   <entry key="instance">./data/mu1979.tsp.txt</entry>
    <entry key="seed">-1</entry>
 </properties>

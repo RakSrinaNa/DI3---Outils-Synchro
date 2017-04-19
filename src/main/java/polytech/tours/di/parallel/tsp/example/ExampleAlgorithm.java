@@ -26,8 +26,8 @@ public class ExampleAlgorithm implements Algorithm
 		//print some distances
 		long max_cpu = Long.valueOf(config.getProperty("maxcpu"));
 		//build a random solution
-		//Random rnd = new Random(Long.valueOf(config.getProperty("seed")));
-		Random rnd = new Random();
+		long seed = Long.valueOf(config.getProperty("seed"));
+		Random rnd = seed > 0 ? new Random(seed) : new Random();
 		Solution s = new Solution();
 		Solution best = null;
 		long startTime = System.currentTimeMillis();
@@ -45,6 +45,7 @@ public class ExampleAlgorithm implements Algorithm
 				best = s.clone();
 		}
 		//return the solution
+		System.out.println(String.format("Time: %ds, Score: %f", (System.currentTimeMillis() - startTime) / 1000, best.getOF()));
 		return best;
 	}
 }
