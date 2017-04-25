@@ -36,7 +36,7 @@ public class Launcher
 				e.printStackTrace();
 				System.exit(1);
 			}
-			System.out.println(runAlgorithm(config));
+			System.out.println(runAlgorithm(config, 1));
 		}
 		else
 		{
@@ -60,7 +60,7 @@ public class Launcher
 					System.exit(1);
 				}
 				
-				String result = runAlgorithm(config);
+				String result = runAlgorithm(config, 10);
 				results.add(result);
 				System.out.println(result + "\n");
 			}
@@ -68,7 +68,7 @@ public class Launcher
 		}
 	}
 	
-	private static String runAlgorithm(Properties config)
+	private static String runAlgorithm(Properties config, int runs)
 	{
 		//dynamically load the algorithm class
 		Algorithm algorithm = null;
@@ -83,7 +83,7 @@ public class Launcher
 		}
 		
 		ArrayList<Solution> solutions = new ArrayList<>();
-		for(int i = 1; i <= 10; i++)
+		for(int i = 1; i <= runs; i++)
 		{
 			System.out.print(i + "/10 ==>\t\t");
 			solutions.add(algorithm.run(config));
